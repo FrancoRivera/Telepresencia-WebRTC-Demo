@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Disfruta tu sesion</title>
+    <link rel="stylesheet" href="assets/css/main.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" href="vendor/css/bootstrap.min.css" type="text/css" media="screen" title="no title" charset="utf-8">
+  </head>
+  <body>
+    <div class="lobby">En la sala:</div>
+    <h1 id="roomStatus"> Permitenos usar tus cámara para las sesiones </h1>
+
+    <video id="localVideo" autoplay muted playsinline></video>
+    <video id="remoteVideo" autoplay playsinline></video>
+
+    <script src="vendor/js/jquery.min.js"> </script>
+    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+    <script src="vendor/socket.io/socket.io.js"></script>
+    <script src="assets/js/session.js"></script>
+  </body>
+</html>

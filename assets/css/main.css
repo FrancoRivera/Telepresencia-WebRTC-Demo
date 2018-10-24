@@ -1,0 +1,35 @@
+video {
+  /*filter: blur(4px) invert(1) opacity(0.5);*/
+  transform: scaleX(-1);
+  -webkit-transform:scaleX(-1); /* Safari and Chrome */ 
+  -moz-transform:scaleX(-1); /* Firefox */ 
+  /*filter: hue-rotate(180deg) saturate(200%); */
+}
+#remoteVideo{
+  z-index: -1;
+  height:100%;
+  max-height: 100%;
+  max-width: 100%;
+  position:absolute;
+  right:0;
+  top:0;
+}
+#localVideo{
+  border-radius:10px;
+  z-index: 1;
+  width:320px;
+  position:absolute;
+  bottom:0px;
+  right:0px;
+}
+
+.lobby{
+  position:absolute;
+  background:#285df6;
+  color: white;
+  padding: 20px;
+  right:0;
+  top:0;
+
+}
+
