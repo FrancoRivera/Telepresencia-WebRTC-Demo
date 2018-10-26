@@ -3,6 +3,7 @@
 var isChannelReady = false;
 var isInitiator = false;
 var isStarted = false;
+var numberOfPeers = 0;
 var localStream;
 var pc;
 var remoteStream;
@@ -52,24 +53,52 @@ function joinedRoom(name){
       inRoom[name] = true;
   }
 }
+// Get name from URL
 var room = 'foo';
+function getQueryParam(param) {
+      location.search.substr(1)
+          .split("&")
+          .some(function(item) { // returns first occurence and stops
+	    return item.split("=")[0] == param && (param = item.split("=")[1])
+	  })
+      return param
+  }
+room = getQueryParam("room");
 // Could prompt for room name:
 //room = prompt('Enter room name:');
 //var socket = io('https://app.Telepresencialearning.com/', {path: '/socket/socket.io/'})
-var socket = io('localhost').connect();
+var socket = io().connect();
 
+var isStudent = Math.round(Math.random());
+if (isStudent) alert("You are a student");
+if (!isStudent) alert("You are a observer");
+var isTransmitter = false;
 
 if (room !== '') {
   setClientMessage("afterAllow")
-  socket.emit('create or join', room);
-  console.log('Attempted to create or  join room', room);
+  socket.emit('create', room);
+  console.log('Attempted to create or join room', room);
 }
 
 socket.on('created', function(room) {
   setClientMessage("joinedRoom")
+  isTransmitter = true
   joinedRoom("Tu")
+navigator.mediaDevices.getUserMedia({
+  audio: true,
+  video: true
+}).then(gotStream)
+  .catch(function(e) {
+    alert('getUserMedia() error: ' + e.name);
+  });
+  alert("You are a transmitter")
   console.log('Created room ' + room);
   isInitiator = true;
+});
+
+socket.on('joinRoom', function(room){
+  if (isStudent) socket.emit('student join', room);
+  if (!isStudent) socket.emit('observer join', room);
 });
 
 socket.on('full', function(room) {
@@ -78,15 +107,19 @@ socket.on('full', function(room) {
 });
 
 socket.on('join', function (room){
+  // Change Status UI
   setClientMessage("joinedRoom")
-  joinedRoom("Somebody else")
+  // Add Somebody to room list
+  joinedRoom("Alguien")
   console.log('Another peer made a request to join room ' + room);
-  console.log('This peer is the initiator of room ' + room + '!');
+  //console.log('This peer is the initiator of room ' + room + '!');
   isChannelReady = true;
 });
 
 socket.on('joined', function(room) {
+  // Change Status UI
   setClientMessage("joinedRoom")
+  // Add Somebody to room list
   joinedRoom("Tu")
   console.log('joined: ' + room);
   isChannelReady = true;
@@ -107,9 +140,11 @@ function sendMessage(message) {
 socket.on('message', function(message) {
   console.log('Client received message:', message);
   if (message === 'got user media') {
+    console.log("Lanuching maybe start")
     maybeStart();
   } else if (message.type === 'offer') {
-    if (!isInitiator && !isStarted) {
+    // If it is not the initiator and it is not started
+    if (!isInitiator) {
       maybeStart();
     }
     pc.setRemoteDescription(new RTCSessionDescription(message));
@@ -123,27 +158,38 @@ socket.on('message', function(message) {
     });
     pc.addIceCandidate(candidate);
   } else if (message === 'bye') {
-    handleRemoteHangup();
-    isInitiator = true;
-  } else if (message === 'bye')
-  {
-   // nothing yet  
+    // handleRemoteHangup();
+    // isInitiator = true;
   }
 });
 
 ////////////////////////////////////////////////////
 
 var localVideo = document.querySelector('#localVideo');
-var remoteVideo = document.querySelector('#remoteVideo');
 
+if (isTransmitter || isStudent){
 navigator.mediaDevices.getUserMedia({
   audio: true,
   video: true
-})
-  .then(gotStream)
+}).then(gotStream)
   .catch(function(e) {
     alert('getUserMedia() error: ' + e.name);
   });
+}
+else{
+
+navigator.mediaDevices.getUserMedia({
+  audio: false,
+  video: false
+}).then( stream => {
+  if (isInitiator) {
+    maybeStart();
+  }
+})
+  .catch(function(e) {
+    alert('getUserMedia() error: ' + e.name);
+  });
+}
 
 function gotStream(stream) {
   setClientMessage("afterAllow")
@@ -175,7 +221,8 @@ if (location.hostname !== 'localhost') {
 }
 function maybeStart() {
   console.log('>>>>>>> maybeStart() ', isStarted, localStream, isChannelReady);
-  if (!isStarted && typeof localStream !== 'undefined' && isChannelReady) {
+  // if (!isStarted && typeof localStream !== 'undefined' && isChannelReady) {
+   if (typeof localStream !== 'undefined' && isChannelReady) {
     console.log('>>>>>> creating peer connection');
     createPeerConnection();
     pc.addStream(localStream);
@@ -285,7 +332,12 @@ function requestTurn(turnURL) {
 function handleRemoteStreamAdded(event) {
   console.log('Remote stream added.');
   remoteStream = event.stream;
-  remoteVideo.srcObject = remoteStream;
+  // Create a new canvas and put the stream there
+  console.log(event)
+  console.log("NOW IT STIME TO ADD THE STREAM")
+  numberOfPeers += 1
+  $('.remoteVideos').append("<video width='"+ 200+ "' height='200' class='remoteVideo' id='stream_"+numberOfPeers+"' autoplay playsinline></video>")
+  $("#stream_"+numberOfPeers)[0].srcObject = remoteStream;
 }
 
 function handleRemoteStreamRemoved(event) {
