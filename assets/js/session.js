@@ -70,6 +70,7 @@ room = getQueryParam("room");
 var socket = io().connect();
 
 var isStudent = Math.round(Math.random());
+isStudent = true;
 if (isStudent) alert("You are a student");
 if (!isStudent) alert("You are a observer");
 var isTransmitter = false;
@@ -336,7 +337,7 @@ function handleRemoteStreamAdded(event) {
   console.log(event)
   console.log("NOW IT STIME TO ADD THE STREAM")
   numberOfPeers += 1
-  $('.remoteVideos').append("<video width='"+ 200+ "' height='200' class='remoteVideo' id='stream_"+numberOfPeers+"' autoplay playsinline></video>")
+  $('.remoteVideos').append("<video width='"+ 500+ "' height='400' class='remoteVideo' id='stream_"+numberOfPeers+"' autoplay playsinline></video>")
   $("#stream_"+numberOfPeers)[0].srcObject = remoteStream;
 }
 

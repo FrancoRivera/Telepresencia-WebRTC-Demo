@@ -18,13 +18,16 @@ video {
   left:0;
 }
 .remoteVideo:nth-of-type(2){
-  left:200px;
+  left:500px;
 }
 .remoteVideo:nth-of-type(3){
-  left:400px;
+  left:1000px;
 }
 .remoteVideo:nth-of-type(4){
-  left:600px;
+  left:1500px;
+}
+.remoteVideo:nth-of-type(4){
+  left:2000px;
 }
 #localVideo{
   border-radius:10px;
