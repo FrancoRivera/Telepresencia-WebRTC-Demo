@@ -46,7 +46,13 @@ io.sockets.on('connection', function(socket) {
     log('Client said: ', message);
     // for a real app, would be room-only (not broadcast)
     console.log("sending message to clients ", message)
-    socket.broadcast.emit('message', message);
+    // The problem is that this message is being broadcasted to everyone
+    if (message === "got user media") {
+      // This is hardcoded, I should pass the room
+      io.sockets.in("transmitter_123").emit('message', message);
+    }else{
+      socket.broadcast.emit('message', message);
+    }
   });
   socket.on('create', function(room) {
     log('Received request to create ' + room);

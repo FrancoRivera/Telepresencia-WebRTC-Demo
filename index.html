@@ -19,7 +19,7 @@
 	  <input class="form-control" type="text" name="key" id="key" value=""
 					  placeholder="Nombre de la Sala (ej. Matematicas2)"/>
 	</div>
-	  <div class="col-md-2 btn btn-primary">Crear</div>
+	  <div class="col-md-2 btn btn-primary" id="createRoom">Crear</div>
       </div>
       <div class="row my-5 justify-content-center">
 	<div class="col-3 col-md-3">
@@ -63,6 +63,12 @@
 	</div>
       </div>
     </div>
+    <script src="vendor/js/jquery.min.js"> </script>
     <script src="vendor/js/bootstrap.min.js" charset="utf-8"></script>
+  <script>
+    $("#createRoom").click(function() {
+	location.href += "room.html?transmitter=1&room=" + $("#key").val()
+    })
+  </script>
   </body>
 </html>
