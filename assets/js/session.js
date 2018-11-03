@@ -89,7 +89,7 @@ socket.on('created', function(room, id) {
   isStudent = false
   myId = id
   joinedRoom("Tu (transmisor)", id)
-/*
+
 navigator.mediaDevices.getUserMedia({
   audio: true,
   video: true
@@ -100,7 +100,7 @@ navigator.mediaDevices.getUserMedia({
   console.log('Created room ' + room);
   //isInitiator = true;
 });
-*/
+
 socket.on('joinRoom', function(room){
   if (isStudent) socket.emit('student join', room);
   //if (!isStudent) socket.emit('observer join', room);
@@ -189,26 +189,6 @@ socket.on('message', function(message, id) {
 
 var localVideo = document.querySelector('#localVideo');
 
-navigator.mediaDevices.getUserMedia({
-  audio: true,
-  video: true
-}).then(gotStream)
-  .catch(function(e) {
-    alert('getUserMedia() error: ' + e.name);
-  });
-//else{
-//navigator.mediaDevices.getUserMedia({
-//  audio: false,
-//  video: false
-//}).then( stream => {
-//  if (isInitiator) {
-//    maybeStart();
-//  }
-//})
-//  .catch(function(e) {
-//    alert('getUserMedia() error: ' + e.name);
-//  });
-//}
 
 function gotStream(stream) {
   setClientMessage("afterAllow")
