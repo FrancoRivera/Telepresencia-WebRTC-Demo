@@ -220,7 +220,8 @@ console.log('Getting user media with constraints', constraints);
 if (location.hostname !== 'localhost') {
   requestTurn(
 {
-    url: 'turn:franco@arulearning.com',
+    url: 'turn:arulearning.com',
+    username: 'franco',
     credential: '123456'
 }
   );
