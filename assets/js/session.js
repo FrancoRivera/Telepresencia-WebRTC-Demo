@@ -122,6 +122,7 @@ socket.on('joined', function(room) {
   joinedRoom("Tu (estudiante)")
   console.log('joined: ' + room);
   isChannelReady = true;
+  maybeStart()
 });
 
 socket.on('log', function(array) {
@@ -157,8 +158,8 @@ socket.on('message', function(message) {
     });
     pc.addIceCandidate(candidate);
   } else if (message === 'bye') {
-    // handleRemoteHangup();
-    // isInitiator = true;
+    handleRemoteHangup();
+    isInitiator = true;
   }
 });
 
@@ -175,20 +176,19 @@ navigator.mediaDevices.getUserMedia({
     alert('getUserMedia() error: ' + e.name);
   });
 }
-else{
-
-navigator.mediaDevices.getUserMedia({
-  audio: false,
-  video: false
-}).then( stream => {
-  if (isInitiator) {
-    maybeStart();
-  }
-})
-  .catch(function(e) {
-    alert('getUserMedia() error: ' + e.name);
-  });
-}
+//else{
+//navigator.mediaDevices.getUserMedia({
+//  audio: false,
+//  video: false
+//}).then( stream => {
+//  if (isInitiator) {
+//    maybeStart();
+//  }
+//})
+//  .catch(function(e) {
+//    alert('getUserMedia() error: ' + e.name);
+//  });
+//}
 
 function gotStream(stream) {
   setClientMessage("afterAllow")
