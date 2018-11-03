@@ -1,5 +1,4 @@
 'use strict';
-llkjk
 var isChannelReady = false;
 var isInitiator = false;
 var isStarted = false;
@@ -220,7 +219,7 @@ console.log('Getting user media with constraints', constraints);
 if (location.hostname !== 'localhost') {
   requestTurn(
 {
-    urls: 'turn:franco@arulearning.com',
+    urls: 'turn:arulearning.com',
     credential: '123456'
 }
   );
