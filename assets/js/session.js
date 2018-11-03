@@ -92,7 +92,7 @@ navigator.mediaDevices.getUserMedia({
     alert('getUserMedia() error: ' + e.name);
   });
   console.log('Created room ' + room);
-  isInitiator = true;
+  //isInitiator = true;
 });
 
 socket.on('joinRoom', function(room){
@@ -122,6 +122,7 @@ socket.on('joined', function(room) {
   joinedRoom("Tu (estudiante)")
   console.log('joined: ' + room);
   isChannelReady = true;
+  isInitiator = true;
   maybeStart()
 });
 
