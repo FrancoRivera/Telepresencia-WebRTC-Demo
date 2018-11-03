@@ -89,7 +89,7 @@ socket.on('created', function(room, id) {
   isStudent = false
   myId = id
   joinedRoom("Tu (transmisor)", id)
-
+/*
 navigator.mediaDevices.getUserMedia({
   audio: true,
   video: true
@@ -100,7 +100,7 @@ navigator.mediaDevices.getUserMedia({
   console.log('Created room ' + room);
   //isInitiator = true;
 });
-
+*/
 socket.on('joinRoom', function(room){
   if (isStudent) socket.emit('student join', room);
   //if (!isStudent) socket.emit('observer join', room);
