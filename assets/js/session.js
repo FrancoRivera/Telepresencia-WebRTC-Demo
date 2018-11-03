@@ -8,6 +8,8 @@ var localStream;
 var pc;
 var remoteStream;
 var turnReady;
+var myId = null;
+var latestId = null;
 
 var pcConfig = {
   'iceServers': [{
@@ -46,10 +48,10 @@ function setClientMessage(key){
   }
 }
 
-function joinedRoom(name){
+function joinedRoom(name, id){
   console.log(name)
   if (!inRoom[name]){
-      $(".lobby").append("<div>" + name + "</div>")
+      $(".lobby").append("<div>" + name + "<small>" + id +"</small></div>")
       inRoom[name] = true;
   }
 }
@@ -80,10 +82,12 @@ if (room !== '') {
   console.log('Attempted to create or join room', room);
 }
 
-socket.on('created', function(room) {
+socket.on('created', function(room, id) {
   setClientMessage("joinedRoom")
   isTransmitter = true
-  joinedRoom("Tu (transmisor)")
+  myId = id
+  joinedRoom("Tu (transmisor)", id)
+
 navigator.mediaDevices.getUserMedia({
   audio: true,
   video: true
@@ -105,21 +109,35 @@ socket.on('full', function(room) {
   console.log('Room ' + room + ' is full');
 });
 
-socket.on('join', function (room){
+socket.on('join', function (room, id){
   // Change Status UI
   setClientMessage("joinedRoom")
   // Add Somebody to room list
-  joinedRoom("Alguien")
+  console.log("Estudiante nuevo: ", id)
+  joinedRoom("Estudiante ", id)
   console.log('Another peer made a request to join room ' + room);
   //console.log('This peer is the initiator of room ' + room + '!');
   isChannelReady = true;
 });
 
-socket.on('joined', function(room) {
+socket.on('student joined', function (room, id){
+  console.log("Emits to students the id");
+  latestId = id
+  if (isTransmitter) socket.emit("transmitter info", id, myId)
+});
+
+socket.on('transmitter info', function(id) {
+  console.log("receives transmitter info")
+  joinedRoom("Transmisor", id)
+  latestId = id
+});
+socket.on('joined', function(room, id) {
   // Change Status UI
   setClientMessage("joinedRoom")
   // Add Somebody to room list
-  joinedRoom("Tu (estudiante)")
+  joinedRoom("Tu (estudiante)", id)
+  myId = id
+  console.log("My id ", id)
   console.log('joined: ' + room);
   isChannelReady = true;
   isInitiator = true;
@@ -134,11 +152,11 @@ socket.on('log', function(array) {
 
 function sendMessage(message) {
   console.log('Client sending message: ', message);
-  socket.emit('message', message);
+  socket.emit('message', message, myId);
 }
 
-// This client receives a message
-socket.on('message', function(message) {
+// This client receives a message and the id of who sent it
+socket.on('message', function(message, id) {
   console.log('Client received message:', message);
   if (message === 'got user media') {
     console.log("Lanuching maybe start")
@@ -159,7 +177,7 @@ socket.on('message', function(message) {
     });
     pc.addIceCandidate(candidate);
   } else if (message === 'bye') {
-    handleRemoteHangup();
+    handleRemoteHangup(id);
     isInitiator = true;
   }
 });
@@ -333,11 +351,13 @@ function handleRemoteStreamAdded(event) {
   console.log('Remote stream added.');
   remoteStream = event.stream;
   // Create a new canvas and put the stream there
-  console.log(event)
-  console.log("NOW IT STIME TO ADD THE STREAM")
   numberOfPeers += 1
-  $('.remoteVideos').append("<video width='"+ 500+ "' height='400' class='remoteVideo' id='stream_"+numberOfPeers+"' autoplay playsinline></video>")
-  $("#stream_"+numberOfPeers)[0].srcObject = remoteStream;
+  $('.remoteVideos').append("<video class='remoteVideo' id='video_"+ latestId +"' autoplay playsinline></video>")
+  $(".remoteVideo").each(function(){
+    console.log("One");
+    //$(this)
+  })
+  $("#video_" + latestId)[0].srcObject = remoteStream;
 }
 
 function handleRemoteStreamRemoved(event) {
@@ -350,8 +370,10 @@ function hangup() {
   sendMessage('bye');
 }
 
-function handleRemoteHangup() {
+function handleRemoteHangup(id) {
   console.log('Session terminated.');
+  //remove the video from the videos arrays
+  $("#video_"+id).remove()
   stop();
   isInitiator = false;
 }

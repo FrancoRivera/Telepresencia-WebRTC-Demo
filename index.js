@@ -80,6 +80,10 @@ io.sockets.on('connection', function(socket) {
 //    // Join room as oberver, send and receive appropiate info
 //  })
 
+  socket.on('transmitter info', function(student_id, transmitter_id) {
+    log("Sending transmitter info: " + student_id)
+    io.sockets.connected[student_id].emit("transmitter info", transmitter_id);
+  });
   socket.on('student join', function(room) {
     log('Received request  from a student to join room '
       + room + ' with trasmitter at ' + room.id);
@@ -100,9 +104,9 @@ io.sockets.on('connection', function(socket) {
     } else if (numClients < MAX_STUDENTS) {
       log('Client ID ' + socket.id + ' joined room ' + room);
       // Notify transmitter to start transmitting to student
-      io.sockets.in("transmitter_"+room).emit('student joined', room);
+      io.sockets.in("transmitter_"+room).emit('student joined', room, socket.id);
       //Someone joined (increase people in room)
-      io.sockets.in(room).emit('join', room);
+      io.sockets.in(room).emit('join', room, socket.id);
 
       // Student joins room
       socket.join(room);
@@ -120,6 +124,7 @@ io.sockets.on('connection', function(socket) {
     for (var dev in ifaces) {
       ifaces[dev].forEach(function(details) {
         if (details.family === 'IPv4' && details.address !== '127.0.0.1') {
+	  // only send this info to the transmitter and back
           socket.emit('ipaddr', details.address);
         }
       });
