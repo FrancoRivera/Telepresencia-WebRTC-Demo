@@ -71,8 +71,7 @@ var socket = io().connect();
 
 var isStudent = Math.round(Math.random());
 isStudent = true;
-if (isStudent) alert("You are a student");
-if (!isStudent) alert("You are a observer");
+//if (isStudent) alert("You are a student");
 var isTransmitter = false;
 
 if (room !== '') {
@@ -84,7 +83,7 @@ if (room !== '') {
 socket.on('created', function(room) {
   setClientMessage("joinedRoom")
   isTransmitter = true
-  joinedRoom("Tu")
+  joinedRoom("Tu (transmisor)")
 navigator.mediaDevices.getUserMedia({
   audio: true,
   video: true
@@ -92,14 +91,13 @@ navigator.mediaDevices.getUserMedia({
   .catch(function(e) {
     alert('getUserMedia() error: ' + e.name);
   });
-  alert("You are a transmitter")
   console.log('Created room ' + room);
   isInitiator = true;
 });
 
 socket.on('joinRoom', function(room){
   if (isStudent) socket.emit('student join', room);
-  if (!isStudent) socket.emit('observer join', room);
+  //if (!isStudent) socket.emit('observer join', room);
 });
 
 socket.on('full', function(room) {
@@ -121,7 +119,7 @@ socket.on('joined', function(room) {
   // Change Status UI
   setClientMessage("joinedRoom")
   // Add Somebody to room list
-  joinedRoom("Tu")
+  joinedRoom("Tu (estudiante)")
   console.log('joined: ' + room);
   isChannelReady = true;
 });

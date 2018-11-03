@@ -74,11 +74,11 @@ io.sockets.on('connection', function(socket) {
   });
 
 
-  socket.on('observer join', function(room) {
-    log('Received request from an observer to join room '
-	+ room + ' with trasmitter at ' + room.id);
-    // Join room as oberver, send and receive appropiate info
-  })
+//  socket.on('observer join', function(room) {
+//    log('Received request from an observer to join room '
+//	+ room + ' with trasmitter at ' + room.id);
+//    // Join room as oberver, send and receive appropiate info
+//  })
 
   socket.on('student join', function(room) {
     log('Received request  from a student to join room '
