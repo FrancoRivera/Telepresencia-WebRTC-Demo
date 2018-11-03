@@ -42,16 +42,21 @@ io.sockets.on('connection', function(socket) {
     socket.emit('log', array);
   }
 
-  socket.on('message', function(message) {
-    log('Client said: ', message);
-    // for a real app, would be room-only (not broadcast)
-    console.log("sending message to clients ", message)
-    // The problem is that this message is being broadcasted to everyone
-    if (message === "got user media") {
-      // This is hardcoded, I should pass the room
-      io.sockets.in("transmitter_123").emit('message', message);
+  socket.on('message', function(message, id, room, isStudent, student_id) {
+
+    if (isStudent){
+      console.log('Student said: ', message);
+      io.sockets.in("transmitter_"+ room ).emit('message', message, id);
     }else{
-      socket.broadcast.emit('message', message);
+      console.log('Transmitter said: ', message);
+    // The problem is that this message is being broadcasted to everyone,
+      // change to only send offer/answer/candidate to id
+      if (student_id != null)
+	try {
+	    io.sockets.connected[student_id].emit("message", message, id);
+	} catch (e) {
+	  console.log("Looks like the partner doesnt exist anymore")
+	}
     }
   });
   socket.on('create', function(room) {

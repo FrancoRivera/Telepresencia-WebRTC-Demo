@@ -9,6 +9,7 @@ var pc;
 var remoteStream;
 var turnReady;
 var myId = null;
+var transmitterId = null;
 var latestId = null;
 
 var pcConfig = {
@@ -49,10 +50,10 @@ function setClientMessage(key){
 }
 
 function joinedRoom(name, id){
-  console.log(name)
-  if (!inRoom[name]){
+  console.log("Una nueva persona entro al salon")
+  if (!inRoom[id]){
       $(".lobby").append("<div>" + name + "<small>" + id +"</small></div>")
-      inRoom[name] = true;
+      inRoom[id] = true;
   }
 }
 // Get name from URL
@@ -85,6 +86,7 @@ if (room !== '') {
 socket.on('created', function(room, id) {
   setClientMessage("joinedRoom")
   isTransmitter = true
+  isStudent = false
   myId = id
   joinedRoom("Tu (transmisor)", id)
 
@@ -129,6 +131,7 @@ socket.on('student joined', function (room, id){
 socket.on('transmitter info', function(id) {
   console.log("receives transmitter info")
   joinedRoom("Transmisor", id)
+  transmitterId = id
   latestId = id
 });
 socket.on('joined', function(room, id) {
@@ -152,14 +155,14 @@ socket.on('log', function(array) {
 
 function sendMessage(message) {
   console.log('Client sending message: ', message);
-  socket.emit('message', message, myId);
+  socket.emit('message', message, myId, room, isStudent, latestId);
 }
 
 // This client receives a message and the id of who sent it
 socket.on('message', function(message, id) {
-  console.log('Client received message:', message);
+  //console.log('Client received message:', message);
   if (message === 'got user media') {
-    console.log("Lanuching maybe start")
+    console.log("Launching maybe start")
     maybeStart();
   } else if (message.type === 'offer') {
     // If it is not the initiator and it is not started
@@ -346,17 +349,22 @@ function requestTurn(turnURL) {
 	*/
   }
 }
-
+function updateVideos(){
+  var contador = 0
+  $(".remoteVideo").each(function(){
+    // reduce video size
+    $(this).css("width", (100/numberOfPeers) + "vw")
+    $(this).css("left", (contador*(100/numberOfPeers)) + "vw")
+    contador += 1
+  })
+}
 function handleRemoteStreamAdded(event) {
   console.log('Remote stream added.');
   remoteStream = event.stream;
   // Create a new canvas and put the stream there
   numberOfPeers += 1
   $('.remoteVideos').append("<video class='remoteVideo' id='video_"+ latestId +"' autoplay playsinline></video>")
-  $(".remoteVideo").each(function(){
-    console.log("One");
-    //$(this)
-  })
+  updateVideos();
   $("#video_" + latestId)[0].srcObject = remoteStream;
 }
 
@@ -373,8 +381,11 @@ function hangup() {
 function handleRemoteHangup(id) {
   console.log('Session terminated.');
   //remove the video from the videos arrays
+  console.log("Removing id: " , id)
   $("#video_"+id).remove()
-  stop();
+  numberOfPeers -= 1
+  updateVideos();
+  //stop();
   isInitiator = false;
 }
 
