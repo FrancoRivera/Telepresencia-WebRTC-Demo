@@ -384,6 +384,15 @@ function handleRemoteStreamAdded(event) {
   $('.remoteVideos').append("<video class='remoteVideo' id='video_"+ latestId +"' autoplay playsinline></video>")
   updateVideos();
   $("#video_" + latestId)[0].srcObject = remoteStream;
+
+  $("#video_" + latestId)[0].addEventListener('loadedmetadata', function() {
+  console.log(`loaded metadata Remote video videoWidth: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
+});
+  $("#video_" + latestId)[0].addEventListener('resize', () => {
+  console.log(`resize: Remote video size changed to ${$("#video_" + latestId)[0].videoWidth}x${$("#video_" + latestId)[0].videoHeight}`);
+  // We'll use the first onsize callback as an indication that video has started
+  // playing out.
+});
 }
 
 function handleRemoteStreamRemoved(event) {
