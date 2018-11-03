@@ -189,7 +189,6 @@ socket.on('message', function(message, id) {
 
 var localVideo = document.querySelector('#localVideo');
 
-if (isTransmitter || isStudent){
 navigator.mediaDevices.getUserMedia({
   audio: true,
   video: true
@@ -197,7 +196,6 @@ navigator.mediaDevices.getUserMedia({
   .catch(function(e) {
     alert('getUserMedia() error: ' + e.name);
   });
-}
 //else{
 //navigator.mediaDevices.getUserMedia({
 //  audio: false,
