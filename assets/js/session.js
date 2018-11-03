@@ -142,6 +142,13 @@ socket.on('joined', function(room, id) {
   myId = id
   console.log("My id ", id)
   console.log('joined: ' + room);
+  navigator.mediaDevices.getUserMedia({
+    audio: true,
+    video: true
+  }).then(gotStream)
+    .catch(function(e) {
+      alert('getUserMedia() error: ' + e.name);
+    });
   isChannelReady = true;
   isInitiator = true;
   maybeStart()
