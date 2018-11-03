@@ -352,11 +352,29 @@ function requestTurn(turnURL) {
 function updateVideos(){
   var contador = 0
   $(".remoteVideo").each(function(){
+  if (numberOfPeers >= 4){
+    //put them on a square grid
+    if (contador < 2) {
+    $(this).css("width", (50) + "vw")
+    $(this).css("height", (50) + "vh")
+    $(this).css("top", "0")
+    $(this).css("left", (contador*50) + "vw")
+    }
+    else{
+    $(this).css("width", (100/(numberOfPeers-2)) + "vw")
+    $(this).css("height", (50) + "vh")
+    $(this).css("top", "50vh")
+    $(this).css("left", ((contador-2)*(100/(numberOfPeers-2))) + "vw")
+    }
+  }
+  else{
     // reduce video size
     $(this).css("width", (100/numberOfPeers) + "vw")
     $(this).css("left", (contador*(100/numberOfPeers)) + "vw")
-    contador += 1
-  })
+  }
+  contador += 1;
+  }
+  )
 }
 function handleRemoteStreamAdded(event) {
   console.log('Remote stream added.');
