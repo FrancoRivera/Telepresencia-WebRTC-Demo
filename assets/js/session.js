@@ -89,10 +89,23 @@ socket.on('created', function(room, id) {
   myId = id
   joinedRoom("Tu (transmisor)", id)
 
-navigator.mediaDevices.getUserMedia({
-  audio: true,
-  video: true
-}).then(gotStream)
+sdpConstraints = {
+  offerToReceiveAudio: true,
+  offerToReceiveVideo: false
+};
+navigator.mediaDevices.getUserMedia(
+    {
+    audio: true,
+    video: {
+        width: {
+            max: 3309
+        },
+        height: {
+            max: 1613
+        }
+    }
+    }
+).then(gotStream)
   .catch(function(e) {
     alert('getUserMedia() error: ' + e.name);
   });
@@ -143,7 +156,14 @@ socket.on('joined', function(room, id) {
   console.log('joined: ' + room);
   navigator.mediaDevices.getUserMedia({
     audio: true,
-    video: true
+    video: {
+        width: {
+            max: 200
+        },
+        height: {
+            max: 200
+        }
+    }
   }).then(gotStream)
     .catch(function(e) {
       alert('getUserMedia() error: ' + e.name);
