@@ -13,16 +13,27 @@ var latestId = null;
 
 var pcConfig = {
   'iceServers': [{
-    'urls': 'stun:stun.l.google.com:19302'
+    'url': 'stun:stun.l.google.com:19302'
   },
+  {
+    'url': 'turn:arulearning.com',
+    'username': 'franco',
+    'credential': '123456'
+  }
 	]
 };
-
+turnReady = true;
 // Set up audio and video regardless of what devices are present.
 var sdpConstraints = {
-  offerToReceiveAudio: true,
-  offerToReceiveVideo: true
+    mandatory: {
+        OfferToReceiveAudio: true,
+        OfferToReceiveVideo: true
+    }
 };
+//var sdpConstraints = {
+//  offerToReceiveAudio: true,
+//  offerToReceiveVideo: false
+//};
 
 /////////////////////////////////////////////
 
@@ -44,7 +55,7 @@ window.setInterval(function(){
   console.log('rtt (round trip): ' + navigator.connection.rtt + 'ms');
   console.log('effectiveType: ' + navigator.connection.effectiveType);
 
-}, 1000)
+}, 10000)
 function downloadSampleFile(){
   // Taken From
   // https://gist.github.com/debloper/7296289
@@ -133,22 +144,23 @@ socket.on('created', function(room, id) {
   myId = id
   joinedRoom("Tu (transmisor)", id)
 
-sdpConstraints = {
+  sdpConstraints = {
   offerToReceiveAudio: true,
   offerToReceiveVideo: false
 };
 navigator.mediaDevices.getUserMedia(
     {
     audio: true,
-    video: {
-        width: {
-            max: 3309
-        },
-        height: {
-            max: 1613
-        }
-    }
-    }
+    video: true
+   // video: {
+   //     width: {
+   //         max: 3309
+   //     },
+   //     height: {
+   //         max: 1613
+   //     }
+   // }
+  }
 ).then(gotStream)
   .catch(function(e) {
     alert('getUserMedia() error: ' + e.name);
@@ -200,14 +212,15 @@ socket.on('joined', function(room, id) {
   console.log('joined: ' + room);
   navigator.mediaDevices.getUserMedia({
     audio: true,
-    video: {
-        width: {
-            max: 200
-        },
-        height: {
-            max: 200
-        }
-    }
+    video: false
+    //video: {
+    //    width: {
+    //        max: 200
+    //    },
+    //    height: {
+    //        max: 200
+    //    }
+    //}
   }).then(gotStream)
     .catch(function(e) {
       alert('getUserMedia() error: ' + e.name);
@@ -344,13 +357,13 @@ function handleCreateOfferError(event) {
 }
 
 function doCall() {
-  console.log('Sending offer to peer');
-  pc.createOffer(setLocalAndSendMessage, handleCreateOfferError);
+  console.log('Sending offer to peer', sdpConstraints);
+  pc.createOffer(setLocalAndSendMessage, handleCreateOfferError, sdpConstraints);
 }
 
 function doAnswer() {
   console.log('Sending answer to peer.');
-  pc.createAnswer().then(
+  pc.createAnswer(sdpConstraints).then(
     setLocalAndSendMessage,
     onCreateSessionDescriptionError
   );
@@ -365,7 +378,7 @@ function setLocalAndSendMessage(sessionDescription) {
 function onCreateSessionDescriptionError(error) {
   trace('Failed to create session description: ' + error.toString());
 }
-
+/*
 function requestTurn(turnURL) {
   var turnExists = false;
   for (var i in pcConfig.iceServers) {
@@ -380,7 +393,7 @@ function requestTurn(turnURL) {
     // No TURN server. Get one from computeengineondemand.appspot.com:
     pcConfig.iceServers.push(turnURL)
     turnReady = true;
-    /*var xhr = new XMLHttpRequest();
+    var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
       if (xhr.readyState === 4 && xhr.status === 200) {
 	var turnServer = JSON.parse(xhr.responseText);
@@ -394,9 +407,9 @@ function requestTurn(turnURL) {
     };
     xhr.open('GET', turnURL, true);
     xhr.send();
-	*/
   }
 }
+*/
 function updateVideos(){
   var contador = 0
   $(".remoteVideo").each(function(){
