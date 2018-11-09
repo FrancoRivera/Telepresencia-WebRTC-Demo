@@ -13,10 +13,10 @@ var latestId = null;
 
 var pcConfig = {
   'iceServers': [{
-    'url': 'stun:stun.l.google.com:19302'
+    'urls': 'stun:stun.l.google.com:19302'
   },
   {
-    'url': 'turn:arulearning.com',
+    'urls': 'turn:arulearning.com',
     'username': 'franco',
     'credential': '123456'
   }
@@ -293,14 +293,14 @@ var constraints = {
 
 console.log('Getting user media with constraints', constraints);
 
-if (location.hostname !== 'localhost') {
-  requestTurn(
-{
-    urls: 'turn:arulearning.com',
-    credential: '123456'
-}
-  );
-}
+//if (location.hostname !== 'localhost') {
+//  requestTurn(
+//{
+//    urls: 'turn:arulearning.com',
+//    credential: '123456'
+//}
+//  );
+//}
 function maybeStart() {
   console.log('>>>>>>> maybeStart() ', isStarted, localStream, isChannelReady);
   // if (!isStarted && typeof localStream !== 'undefined' && isChannelReady) {
