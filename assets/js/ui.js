@@ -76,7 +76,7 @@ function setClientMessage(key){
 var clientMessages={
 "beforeAllow": "Permítenos usar tu cámara para las sesiones",
   "afterAllow" :"Gracias, ahora te conectaremos a la sala",
-  "joinedRoom": "Listo, espera un momento que se conecte la otra persona",
+  "joinedRoom": "Link de conexión: <a href='"+ location.href + "'>" + location.href + "</a>",
   "beforeConnection":  "Alguien se conectó, espera mientras iniciamos la llamada",
   "afterConnection" : "Listo, disfruta de la sesión de Telepresencia",
   "roomFull" : "La sala esta llena, has abierto la sesion en dos pestañas de casualidad, o no deberias estar en esta sesion.",
@@ -84,13 +84,11 @@ var clientMessages={
 }
 
 var inRoom = {}
-
 function joinedRoom(name, id){
-  console.log("Una nueva persona entro al salon")
   if (!inRoom[id]){
     $(".lobby > ul").append(
 	"<li>" + name +
-	    "<small>" + id +"</small>" +
+	    //"<small>" + id +"</small>" +
 	  "</li>")
     inRoom[id] = true;
   }
@@ -110,6 +108,8 @@ function updateVideos(){
   console.log("number of peers", numberOfPeers);
   if (numberOfPeers > 0){
     $("#localVideo").css("width", "320px");
+    $("#localVideo").css("right", "0");
+    $("#localVideo").css("height", "initial");
   }
   $(".remoteVideo").each(function(){
     if (numberOfPeers >= 4){

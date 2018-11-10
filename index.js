@@ -32,9 +32,11 @@ opn('http://localhost:'+port)
 
 //var io = socketIO.listen(app, { path: '/socket/socket.io'} );
 var io = socketIO.listen(app);
+var rooms = []
 //io.path('/socket/socket.io')
 io.sockets.on('connection', function(socket) {
 
+  socket.emit('rooms', rooms);
   // convenience function to log server messages on the client
   function log() {
     var array = ['Message from server:'];
@@ -68,10 +70,11 @@ io.sockets.on('connection', function(socket) {
     if (numClients === 0) {
       //Create new room
       socket.join(room);
-      // Creator is transmitter so join transmitter room
       socket.join("transmitter_" + room);
       log('Client ID ' + socket.id + ' created room ' + room);
       socket.emit('created', room, socket.id);
+      socket.broadcast.emit('new room', room);
+      rooms.push(room);
 
     } else { // Room Already exists, tell client it can join the room
       socket.emit('joinRoom', room);

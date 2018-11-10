@@ -7,23 +7,37 @@ video {
 }
 .remoteVideo{
   z-index: -1;
+  display: block;
+  height: 100%;
+  max-height: 100%;
   max-width: 100%;
-  position:absolute;
-  left:0;
-  top:0;
+  object-fit: cover;
+  position: absolute;
   /* To "mirror" */
-  transform: scaleX(1);
-  -webkit-transform:scaleX(1); /* Safari and Chrome */
-  -moz-transform:scaleX(1); /* Firefox */
+  -moz-transform: rotateY(180deg);
+  -ms-transform: rotateY(180deg);
+  -o-transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+  transform: rotateY(180deg);
+  transition: opacity 1s;
+  width: 100%;
 }
 #localVideo{
   border-radius:10px;
-  z-index: 1;
   width:100%;
   position:absolute;
-  bottom:0px;
-  right:0px;
+  bottom: 0px;
+  height: 100%;
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: cover;
+  -moz-transform: scale(-1, 1);
+  -ms-transform: scale(-1, 1);
+  -o-transform: scale(-1, 1);
+  -webkit-transform: scale(-1, 1);
+  transform: scale(-1, 1);
   transition: all 0.5s ease-in;
+  width: 100%;
 }
 .controls{
   border-radius: 10px;
@@ -49,10 +63,10 @@ video {
   position:absolute;
   background:#285df6;
   color: white;
-  padding: 20px;
+  padding: 50px 20px 0;
   right:0;
   top:0;
-  z-index:4;
+  z-index:3;
   -webkit-border-bottom-left-radius: 10px;
   -moz-border-radius-bottomleft: 10px;
   border-bottom-left-radius: 10px;
@@ -63,7 +77,7 @@ video {
   top: 0;
   left:0;
   width: 100%;
-  z-index: 3;
+  z-index: 4;
   font-size: 15px;
   text-align: center;
   padding: 10px;

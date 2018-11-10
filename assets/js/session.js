@@ -64,7 +64,6 @@ if (room !== '') {
     .catch(function(e) {
       alert('getUserMedia() error: ' + e.name);
     });
-  setClientMessage("afterAllow");
 } else{
   alert("¿Estás seguro que deberías estar aquí?");
 }
@@ -80,7 +79,7 @@ socket.on('created', function(room, id) {
     offerToReceiveAudio: true,
     offerToReceiveVideo: true
   };
-
+  isChannelReady = true;
   console.log('Created room ' + room);
 });
 
@@ -174,9 +173,7 @@ var localVideo = document.querySelector('#localVideo');
 
 function gotStream(stream) {
   setClientMessage("afterAllow")
-  if (isChannelReady){
-    setClientMessage("joinedRoom")
-  }
+  if (isChannelReady){ setClientMessage("joinedRoom") }
   console.log('Adding local stream.');
   localStream = stream;
   localVideo.srcObject = stream;
