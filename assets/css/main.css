@@ -1,4 +1,4 @@
-video {
+videso {
   /*filter: blur(4px) invert(1) opacity(0.5);*/
   transform: scaleX(-1);
   -webkit-transform:scaleX(-1); /* Safari and Chrome */ 
@@ -13,12 +13,13 @@ video {
   max-width: 100%;
   object-fit: cover;
   position: absolute;
-  /* To "mirror" */
+  /* To "mirror" 
   -moz-transform: rotateY(180deg);
   -ms-transform: rotateY(180deg);
   -o-transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg);
   transform: rotateY(180deg);
+  */
   transition: opacity 1s;
   width: 100%;
 }

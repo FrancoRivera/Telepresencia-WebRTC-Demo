@@ -32,7 +32,7 @@ opn('http://localhost:'+port)
 
 //var io = socketIO.listen(app, { path: '/socket/socket.io'} );
 var io = socketIO.listen(app);
-var rooms = []
+var rooms = {};
 //io.path('/socket/socket.io')
 io.sockets.on('connection', function(socket) {
 
@@ -74,7 +74,7 @@ io.sockets.on('connection', function(socket) {
       log('Client ID ' + socket.id + ' created room ' + room);
       socket.emit('created', room, socket.id);
       socket.broadcast.emit('new room', room);
-      rooms.push(room);
+      rooms[room] = true;
 
     } else { // Room Already exists, tell client it can join the room
       socket.emit('joinRoom', room);

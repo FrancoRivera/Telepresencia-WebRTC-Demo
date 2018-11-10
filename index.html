@@ -10,7 +10,7 @@
     <div class="container">
       <div class="row my-5 justify-content-center">
 	<div class="col-8 col-md-8">
-	  <h1 class="display-4">Bienvienido a Telepresencia</h1>
+	  <h1 class="display-4">Bienvenido a Telepresencia</h1>
 	  <h2>Escoje o crea una sala</h2>
 	</div>
       </div>
@@ -48,8 +48,7 @@
 
 	socket.on("rooms", function(rooms){
 	  this.rooms = rooms;
-	  console.log(rooms);
-	rooms.forEach(room => addRoom(room, "Descripción de "+room) );
+	Object.keys(rooms).forEach(room => addRoom(room, "Descripción de "+room) );
       })
 	socket.on("new room", function(room){
 	addRoom(room, "Descripcion de "+room)
