@@ -7,8 +7,6 @@ video {
 }
 .remoteVideo{
   z-index: -1;
-  height:100%;
-  max-height: 100%;
   max-width: 100%;
   position:absolute;
   left:0;
@@ -25,7 +23,7 @@ video {
   position:absolute;
   bottom:0px;
   right:0px;
-  transition: all 1s ease-in;
+  transition: all 0.5s ease-in;
 }
 .controls{
   border-radius: 10px;

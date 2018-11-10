@@ -14,13 +14,14 @@
 	  <h2>Escoje o crea una sala</h2>
 	</div>
       </div>
-      <div class="row justify-content-center">
+	<form action="room.html" method="get" accept-charset="utf-8" class="row justify-content-center">
 	<div class="col-6 col-md-6">
-	  <input class="form-control" type="text" name="key" id="key" value=""
-					  placeholder="Nombre de la Sala (ej. Matematicas2)"/>
+	  <input type="hidden" name="transmitter" value="1">
+	  <input class="form-control" type="text" name="key" value=""
+		placeholder="Nombre de la Sala (ej. Matematicas2)" required/>
 	</div>
-	  <div class="col-md-2 btn btn-primary" id="createRoom">Crear</div>
-      </div>
+	  <button class="col-md-2 btn btn-primary">Crear</button>
+	</form>
       <div class="row my-5 justify-content-center">
 	<div class="col-3 col-md-3">
 	  <div class="card room">

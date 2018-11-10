@@ -1,30 +1,43 @@
-$(document).mouseover(function(){
-   $(".muteAudio").show("slide",
+$(document).mouseover(showControls);
+$(document).mouseleave(hideControls);
+function showControls(){
+   $(".fullscreen").show("slide",
      {
       direction: "left",
-      duration: 200
+      duration: 30
     }, function(){
    $(".muteVideo").show("slide",
      {
       direction: "left",
-      duration: 200
+      duration: 30
     }, function(){
-   $(".fullscreen").show("slide",
+   $(".muteAudio").show("slide",
      {
       direction: "left",
-      duration: 200
-    }, function(){
+      duration: 30
     });
     });
     });
-});
-$(document).mouseleave(function(){
+}
+function hideControls(){
    $(".muteAudio").hide("slide",
      {
       direction: "left",
-      duration: 200
+      duration: 30
+    }, function(){
+   $(".muteVideo").hide("slide",
+     {
+      direction: "left",
+      duration: 30
+    }, function(){
+   $(".fullscreen").hide("slide",
+     {
+      direction: "left",
+      duration: 30
     });
-});
+    });
+    });
+}
 
 function setClientMessage(key){
   $("#roomStatus").html(clientMessages[key])
@@ -37,24 +50,24 @@ function setClientMessage(key){
    $("#roomStatus").hide("slide",
      {
       direction: "up",
-      duration: 1000
+      duration: 300
     });
    $(".lobby").hide("slide",
      {
       direction: "right",
-      duration: 1000
+      duration: 300
     });
   }
   else{
    $("#roomStatus").show("slide",
      {
       direction: "up",
-      duration: 1000
+      duration: 300
     });
    $(".lobby").show("slide",
      {
       direction: "right",
-      duration: 1000
+      duration: 300
     });
   }
 
@@ -94,7 +107,7 @@ function getQueryParam(param) {
 
 function updateVideos(){
   var contador = 0
-  console.log(numberOfPeers);
+  console.log("number of peers", numberOfPeers);
   if (numberOfPeers > 0){
     $("#localVideo").css("width", "320px");
   }
@@ -176,8 +189,13 @@ function toggleLocalAudio(){
   else {
     $(".muteAudio").children("i").removeClass("fa-microphone-slash");
     $(".muteAudio").children("i").addClass("fa-microphone");
-
   }
+   localStream.getTracks().forEach(
+     track =>
+     {
+       if(track.kind == "audio")
+	 track.enabled = !track.enabled;
+     })
 }
 function toggleLocalVideo(){
   localVideoMuted = !localVideoMuted;
@@ -189,6 +207,12 @@ function toggleLocalVideo(){
     $(".muteVideo").children("i").removeClass("fa-video-slash");
     $(".muteVideo").children("i").addClass("fa-video");
   }
+   localStream.getTracks().forEach(
+     track =>
+     {
+       if(track.kind == "video")
+	 track.enabled = !track.enabled;
+     })
 }
 
 // If it is chrome show the network information
