@@ -157,7 +157,7 @@ socket.on('created', function(room, id) {
 
   sdpConstraints = {
   offerToReceiveAudio: true,
-  offerToReceiveVideo: false
+  offerToReceiveVideo: true
 };
 navigator.mediaDevices.getUserMedia(
     {
@@ -223,7 +223,7 @@ socket.on('joined', function(room, id) {
   console.log('joined: ' + room);
   navigator.mediaDevices.getUserMedia({
     audio: true,
-    video: false
+    video: true
     //video: {
     //    width: {
     //        max: 200
