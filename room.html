@@ -5,10 +5,17 @@
     <title>Disfruta tu sesion</title>
     <link rel="stylesheet" href="assets/css/main.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <link rel="stylesheet" href="vendor/css/bootstrap.min.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <link rel="stylesheet" href="vendor/js/jquery-ui.min.css">
   </head>
   <body>
-    <div class="lobby">En la sala:</div>
-    <h1 id="roomStatus"> Permitenos usar tus cámara para las sesiones </h1>
+    <div class="lobby"><b>Conectados:</b> <ul></ul></div>
+    <div class="controls">
+      <div class="muteAudio" onclick="toggleLocalAudio()"><i class="fas fa-microphone"></i></div>
+	<div class="muteVideo" onclick="toggleLocalVideo()"><i class="fas fa-video"> </i></div>
+	<div class="fullscreen" onclick="toggleFullscreen()"><i class="fas fa-expand"> </i></div>
+    </div>
+    <h1 id="roomStatus"> Permítenos usar tus cámara para las sesiones </h1>
 
     <video id="localVideo" autoplay muted playsinline></video>
 
@@ -16,8 +23,10 @@
 
     </div>
     <script src="vendor/js/jquery.min.js"> </script>
+    <script src="vendor/js/jquery-ui.min.js"></script>
     <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
     <script src="vendor/js/socket.io.js"></script>
+    <script src="assets/js/ui.js"></script>
     <script src="assets/js/session.js"></script>
   </body>
 </html>
