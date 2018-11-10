@@ -11,6 +11,17 @@ var myId = null;
 var transmitterId = null;
 var latestId = null;
 
+var peerConnectionConfig = { iceServers: [
+  {
+    'urls': 'stun:stun.l.google.com:19302'
+  },
+  {
+    urls: 'turn:arulearning.com',
+    username: 'franco',
+    credential: '123456'
+  }
+  ]
+}
 var pcConfig = {
   'iceServers': [{
     'urls': 'stun:stun.l.google.com:19302'
@@ -306,6 +317,7 @@ function maybeStart() {
   // if (!isStarted && typeof localStream !== 'undefined' && isChannelReady) {
    if (typeof localStream !== 'undefined' && isChannelReady) {
     console.log('>>>>>> creating peer connection');
+    console.log("Sending new offers");
     createPeerConnection();
     pc.addStream(localStream);
     isStarted = true;
@@ -326,7 +338,8 @@ window.onbeforeunload = function() {
 
 function createPeerConnection() {
   try {
-    pc = new RTCPeerConnection(null);
+    console.log("Creating peer connection", pcConfig);
+    pc = new RTCPeerConnection(peerConnectionConfig);
     pc.onicecandidate = handleIceCandidate;
     pc.onaddstream = handleRemoteStreamAdded;
     pc.onremovestream = handleRemoteStreamRemoved;
