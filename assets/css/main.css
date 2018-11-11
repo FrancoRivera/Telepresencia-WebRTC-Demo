@@ -28,6 +28,7 @@ videso {
   width:100%;
   position:absolute;
   bottom: 0px;
+  right: 0;
   height: 100%;
   max-height: 100%;
   max-width: 100%;
@@ -37,7 +38,7 @@ videso {
   -o-transform: scale(-1, 1);
   -webkit-transform: scale(-1, 1);
   transform: scale(-1, 1);
-  transition: all 0.5s ease-in;
+  transition: all 0.3s ease-in;
   width: 100%;
 }
 .controls{
@@ -53,25 +54,92 @@ videso {
   padding: 10px;
   margin: 20px 10px;
   border-radius:10px;
-  background:#285df6;
+background: #47a7e0;
   color:white;
   cursor: pointer;
 }
 .controls > div > i{
   margin:0 10px;
 }
-.lobby{
-  position:absolute;
-  background:#285df6;
-  color: white;
-  padding: 50px 20px 0;
-  right:0;
-  top:0;
-  z-index:3;
-  -webkit-border-bottom-left-radius: 10px;
-  -moz-border-radius-bottomleft: 10px;
-  border-bottom-left-radius: 10px;
+.chat-bar {
+position:absolute;
+right:0;
+top: 0;
+width: 300px;
+height: 100%;
+background:white;
+z-index:3;
+padding: 10px;
+border-left: 4px solid #47a7e0;
+}
+.show-chat{
+position:absolute;
+z-index:5;
+bottom: 50%;
+right: 0px;
+background: #47a7e0;
+color: white;
+padding: 20px;
+transition: right 0.3s ease-in;
+-webkit-border-top-left-radius: 10px;
+-webkit-border-bottom-left-radius: 10px;
+-moz-border-radius-topleft: 10px;
+-moz-border-radius-bottomleft: 10px;
+border-top-left-radius: 10px;
+border-bottom-left-radius: 10px;
+cursor: pointer;
 
+}
+.chat{
+position: relative;
+}
+.chat .message{
+  font-size: 14px;
+  color: black;
+  background: #d2d2d2;
+  border-radius: 10px;
+  padding: 10px 15px;
+  width: 80%;
+  margin: 15px 0 10px;
+  position: relative;
+  -webkit-border-bottom-left-radius: 0px;
+  -moz-border-radius-bottomleft: 0px;
+  border-bottom-left-radius: 0px;
+}
+.chat .message.my{
+  color: white;
+  background: #47a7e0;
+  margin-left:20%;
+  -webkit-border-radius: 10px;
+-webkit-border-bottom-right-radius: 0;
+-moz-border-radius: 10px;
+-moz-border-radius-bottomright: 0;
+border-radius: 10px;
+border-bottom-right-radius: 0;
+}
+
+.chat .message .name{
+  font-weight: bold;
+  width: 49%;
+  display:inline-block;
+}
+.chat .message .timestamp{
+  display:inline-block;
+  text-align:right;
+  font-style: italic;
+  width: 49%;
+      font-size: 12px;
+    margin-bottom: 3px;
+}
+.lobby{
+  background: #47a7e0;
+  color: white;
+  padding:  40px 20px 1px;
+  margin: 0 -10px;
+}
+.lobby ul{
+padding: 0;
+list-style: none;
 }
 #roomStatus{
   position:absolute;

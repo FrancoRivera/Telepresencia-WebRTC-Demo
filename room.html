@@ -9,11 +9,31 @@
     <link rel="stylesheet" href="vendor/js/jquery-ui.min.css">
   </head>
   <body>
-    <div class="lobby"><b>Conectados:</b> <ul></ul></div>
     <div class="controls">
       <div class="muteAudio" onclick="toggleLocalAudio()"><i class="fas fa-microphone"></i></div>
-	<div class="muteVideo" onclick="toggleLocalVideo()"><i class="fas fa-video"> </i></div>
-	<div class="fullscreen" onclick="toggleFullscreen()"><i class="fas fa-expand"> </i></div>
+      <div class="muteVideo" onclick="toggleLocalVideo()"><i class="fas fa-video"> </i></div>
+      <div class="fullscreen" onclick="toggleFullscreen()"><i class="fas fa-expand"> </i></div>
+    </div>
+      <div class="show-chat" onclick="toggleChat()"> <i class="fas fa-comments"></i> <span>Chat</span></div>
+    <div class="chat-bar">
+      <div class="chat">
+	<div class="lobby"><b>En la sala:</b> <ul></ul></div>
+	<div class="message"> 
+	  <div class="name">Franco: </div>
+	  <div class="timestamp">13:06pm </div>
+	  <div class="body"> Lorem impsum blahblahblah </div>
+	</div>
+	<div class="my message"> 
+	  <div class="name">Franco: </div>
+	  <div class="timestamp">13:06pm </div>
+	  <div class="body"> Lorem impsum blahblahblah </div>
+	</div>
+	<div class="my message"> 
+	  <div class="name">Franco: </div>
+	  <div class="timestamp">13:06pm </div>
+	  <div class="body"> Lorem impsum blahblahblah </div>
+	</div>
+      </div>
     </div>
     <h1 id="roomStatus"> Permítenos usar tus cámara para las sesiones </h1>
 

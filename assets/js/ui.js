@@ -39,6 +39,41 @@ function hideControls(){
     });
 }
 
+var showChat = false;
+   $(".chat-bar").hide("slide",
+     {
+      direction: "right",
+      duration: 300
+    })
+function toggleChat(){
+  showChat = !showChat;
+  if (showChat){
+    $("#localVideo").css("right", "300px");
+    $(".show-chat").css("right", "300px");
+    $(".show-chat > i").removeClass("fa-comments");
+    $(".show-chat > i").addClass("fa-times");
+    $(".show-chat > span").html("Hide");
+
+   $(".chat-bar").show("slide",
+     {
+      direction: "right",
+      duration: 300
+    })
+
+  }
+  else {
+    $("#localVideo").css("right", "0px");
+    $(".show-chat").css("right", "0px");
+    $(".show-chat > i").removeClass("fa-times");
+    $(".show-chat > i").addClass("fa-comments");
+      $(".show-chat > span").html("Chat");
+   $(".chat-bar").hide("slide",
+     {
+      direction: "right",
+      duration: 300
+    })
+  }
+}
 function setClientMessage(key){
   $("#roomStatus").html(clientMessages[key])
   if (key == "beforeConnection"){
