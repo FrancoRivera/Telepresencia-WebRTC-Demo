@@ -16,13 +16,15 @@
       <div class="muteVideo" onclick="toggleLocalVideo()"><i class="fas fa-video"> </i></div>
       <div class="fullscreen" onclick="toggleFullscreen()"><i class="fas fa-expand"> </i></div>
     </div>
-      <div class="show-chat" onclick="toggleChat()"> <i class="fas fa-comments"></i> <span>Chat</span></div>
+    <div class="show-chat" onclick="toggleChat()">
+      <span class="unread-messages"></span>
+      <i class="fas fa-comments"></i> <span class="label">Chat</span></div>
     <div class="chat-bar">
 	<div class="lobby"><b>En la sala:</b> <ul></ul></div>
       <div class="chat">
       </div>
       <form class="chat-input">
-	<textarea class="form-control" value="" name="chat" id="" placeholder="Write your messsage here"> </textarea>
+	<textarea class="form-control" value="" name="chat" id="chat-body" placeholder="Write your messsage here" required> </textarea>
 	<button class="btn btn-primary send"> <i class="fas fa-arrow-right"></i> Send </button>
       </form>
     </div>

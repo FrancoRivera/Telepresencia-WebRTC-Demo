@@ -1,6 +1,9 @@
 $(document).mouseover(showControls);
 $(document).mouseleave(hideControls);
 $("textarea").autoResize({ extraSpace : 0});
+
+var unread_messages = 0;
+
 function showControls(){
    $(".fullscreen").show("slide",
      {
@@ -39,26 +42,46 @@ function hideControls(){
     });
     });
 }
-$(document).ready(function(){
-var message = {
-  sender_id: myId,
-  time: "13:06pm",
-  body: "shamalahnchaslkf sdfkjsdfl askdf"
-}
-var notMyMessage = {
-  sender_id: "yolo",
-  time: "13:06pm",
-  body: "shamalahnchaslkf sdfkjsdfl askdf"
-}
-addMessage(message);
-addMessage(notMyMessage);
-addMessage(message);
-addMessage(notMyMessage);
-addMessage(notMyMessage);
-addMessage(message);
-addMessage(notMyMessage);
-
+ $(".chat-input").keypress(function (e) {
+    var code = (e.keyCode ? e.keyCode : e.which);
+    if (code == 13 && $("#chat-body").val()) {
+	$(".chat-input").submit();
+      e.preventDefault();
+    }
 });
+$(".chat-input").submit(function( event ) {
+  event.preventDefault();
+  var message = $("#chat-body").val();
+ $("#chat-body").val("");
+  socket.emit("chat", room, message);
+});
+
+$(document).ready(function(){
+socket.on('chat', function(message){
+  console.log("new chat", message);
+  addMessage(message);
+});
+});
+function addZero(i) {
+    if (i < 10) {
+        i = "0" + i;
+    }
+    return i;
+}
+
+function getTime(d) {
+    d = new Date(d);
+    hours =d.getHours()
+    meridian = " am"
+    if (hours > 12){
+      hours -= 12
+      meridian = " pm"
+    }
+
+    var h = addZero(hours);
+    var m = addZero(d.getMinutes());
+    return  h + ":" + m + meridian;
+}
 
 function addMessage(message){
   var name = "Teacher";
@@ -68,13 +91,19 @@ function addMessage(message){
     html += "my"
   }
   else{
-    if (isStudent) name = "Student";
+    if (!isStudent) name = "Student";
     else name = "Teacher";
   }
       html += ' message"><div class="name">'+ name +'</div>'
-      html += '<div class="timestamp">' + message.time + '</div>'
+      html += '<div class="timestamp">' + getTime(message.time) + '</div>'
       html += '<div class="body">' + message.body + '</div> </div>'
+  unread_messages += 1;
+  $(".unread-messages").html(unread_messages);
   $(".chat").append(html);
+  $(".chat").scrollTop($(".chat")[0].scrollHeight);
+  if(!showChat){
+    $(".unread-messages").show();
+  }
 }
 var showChat = false;
    $(".chat-bar").hide("slide",
@@ -89,7 +118,8 @@ function toggleChat(){
     $(".show-chat").css("right", "350px");
     $(".show-chat > i").removeClass("fa-comments");
     $(".show-chat > i").addClass("fa-times");
-    $(".show-chat > span").html("Hide");
+    $(".show-chat > .label").html("Hide");
+    $(".unread-messages").hide();
 
    $(".chat-bar").show("slide",
      {
@@ -103,7 +133,8 @@ function toggleChat(){
     $(".show-chat").css("right", "0px");
     $(".show-chat > i").removeClass("fa-times");
     $(".show-chat > i").addClass("fa-comments");
-      $(".show-chat > span").html("Chat");
+      $(".show-chat > .label").html("Chat");
+    unread_messages = 0;
    $(".chat-bar").hide("slide",
      {
       direction: "right",
@@ -150,7 +181,7 @@ function joinedRoom(name, id){
   if (!inRoom[id]){
     $(".lobby > ul").append(
 	"<li>" + name +
-	    //"<small>" + id +"</small>" +
+	    "<small>" + id +"</small>" +
 	  "</li>")
     inRoom[id] = true;
   }

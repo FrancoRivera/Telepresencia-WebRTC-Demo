@@ -47,10 +47,10 @@ io.sockets.on('connection', function(socket) {
   socket.on('message', function(message, id, room, isStudent, student_id) {
 
     if (isStudent){
-      console.log('Student said: ', message);
+      //console.log('Student said: ', message);
       io.sockets.in("transmitter_"+ room ).emit('message', message, id);
     }else{
-      console.log('Transmitter said: ', message);
+      //console.log('Transmitter said: ', message);
     // The problem is that this message is being broadcasted to everyone,
       // change to only send offer/answer/candidate to id
       if (student_id != null)
@@ -81,17 +81,22 @@ io.sockets.on('connection', function(socket) {
     }
   });
 
-
-//  socket.on('observer join', function(room) {
-//    log('Received request from an observer to join room '
-//	+ room + ' with trasmitter at ' + room.id);
-//    // Join room as oberver, send and receive appropiate info
-//  })
-
   socket.on('transmitter info', function(student_id, transmitter_id) {
     log("Sending transmitter info: " + student_id)
     io.sockets.connected[student_id].emit("transmitter info", transmitter_id);
   });
+
+
+
+  socket.on('chat', function(room, message){
+    var message = {
+      sender_id : socket.id,
+      time : Date.now(),
+      body: message
+    }
+    io.sockets.in(room).emit('chat', message);
+  });
+
   socket.on('student join', function(room) {
     log('Received request  from a student to join room '
       + room + ' with trasmitter at ' + room.id);
