@@ -1,75 +1,90 @@
 'use strict';
-
 var isChannelReady = false;
 var isInitiator = false;
 var isStarted = false;
+var numberOfPeers = 0;
 var localStream;
 var pc;
 var remoteStream;
 var turnReady;
+var myId = null;
+var transmitterId = null;
+var latestId = null;
 
-var pcConfig = {
-  'iceServers': [{
-    'urls': 'stun:stun.l.google.com:19302'
-  },
-	]
-};
+var peerConnectionConfig = { 
+  iceServers: [
+    {
+      urls: 'stun:stun.l.google.com:19302'
+    },
+    {
+      urls: 'turn:arulearning.com',
+      username: 'franco',
+      credential: '123456'
+    }
+  ]
+}
+
+turnReady = true;
 
 // Set up audio and video regardless of what devices are present.
 var sdpConstraints = {
-  offerToReceiveAudio: true,
-  offerToReceiveVideo: true
+  mandatory: {
+    OfferToReceiveAudio: true,
+    OfferToReceiveVideo: true
+  }
 };
 
 /////////////////////////////////////////////
 
-var clientMessages={
-"beforeAllow": "Permítenos usar tu cámara para las sesiones",
-  "afterAllow" :"Gracias, ahora te conectaremos a la sala",
-  "joinedRoom": "Listo, espera un momento que se conecte la otra persona",
-  "beforeConnection":  "Alguien se conectó, espera mientras iniciamos la llamada",
-  "afterConnection" : "Listo, disfruta de la sesión de Telepresencia",
-  "roomFull" : "La sala esta llena, has abierto la sesion en dos pestañas de casualidad, o no deberias estar en esta sesion.",
-  "takingTooLong" : "Esto esta tardando demasiado, prueba refrescando la pagina"
-}
 
-var inRoom = {}
+var socket = io().connect();
 
-//Get room key from server
-function setClientMessage(key){
-  $("#roomStatus").html(clientMessages[key])
-  if (key == "beforeConnection"){
-    window.setTimeout(function(){
-      setClientMessage("takingTooLong")
-    }, 5000)
-  }
-}
+var isStudent = true;
+var isTransmitter = false;
 
-function joinedRoom(name){
-  console.log(name)
-  if (!inRoom[name]){
-      $(".lobby").append("<div>" + name + "</div>")
-      inRoom[name] = true;
-  }
-}
-var room = 'foo';
-// Could prompt for room name:
-//room = prompt('Enter room name:');
-//var socket = io('https://app.Telepresencialearning.com/', {path: '/socket/socket.io/'})
-var socket = io('localhost').connect();
-
-
+var room = getQueryParam("room");
 if (room !== '') {
-  setClientMessage("afterAllow")
-  socket.emit('create or join', room);
-  console.log('Attempted to create or  join room', room);
+  socket.emit('create', room);
+  console.log('Attempted to create or join room', room);
+  navigator.mediaDevices.getUserMedia(
+    {
+      audio: true,
+      video: isStudent
+      //Commenting this cuz doesnt work on all browsers
+      // video: {
+      //     width: {
+      //         max: 3309
+      //     },
+      //     height: {
+      //         max: 1613
+      //     }
+      // }
+    }
+  ).then(gotStream)
+    .catch(function(e) {
+      alert('getUserMedia() error: ' + e.name);
+    });
+} else{
+  alert("¿Estás seguro que deberías estar aquí?");
 }
 
-socket.on('created', function(room) {
+socket.on('created', function(room, id) {
   setClientMessage("joinedRoom")
-  joinedRoom("Tu")
+  isTransmitter = true
+  isStudent = false
+  myId = id
+  joinedRoom("Tu (transmisor)", id)
+
+  sdpConstraints = {
+    offerToReceiveAudio: true,
+    offerToReceiveVideo: true
+  };
+  isChannelReady = true;
   console.log('Created room ' + room);
-  isInitiator = true;
+});
+
+socket.on('joinRoom', function(room){
+  if (isStudent) socket.emit('student join', room);
 });
 
 socket.on('full', function(room) {
@@ -77,19 +92,40 @@ socket.on('full', function(room) {
   console.log('Room ' + room + ' is full');
 });
 
-socket.on('join', function (room){
+socket.on('join', function (room, id){
+  // Change Status UI
   setClientMessage("joinedRoom")
-  joinedRoom("Somebody else")
+  // Add Somebody to room list
+  console.log("Estudiante nuevo: ", id)
+  joinedRoom("Estudiante ", id)
   console.log('Another peer made a request to join room ' + room);
-  console.log('This peer is the initiator of room ' + room + '!');
+  //console.log('This peer is the initiator of room ' + room + '!');
   isChannelReady = true;
 });
 
-socket.on('joined', function(room) {
+socket.on('student joined', function (room, id){
+  console.log("Emits to students the id");
+  latestId = id
+  if (isTransmitter) socket.emit("transmitter info", id, myId)
+});
+
+socket.on('transmitter info', function(id) {
+  console.log("receives transmitter info")
+  joinedRoom("Transmisor", id)
+  transmitterId = id
+  latestId = id
+});
+socket.on('joined', function(room, id) {
+  // Change Status UI
   setClientMessage("joinedRoom")
-  joinedRoom("Tu")
+  // Add Somebody to room list
+  joinedRoom("Tu (estudiante)", id)
+  myId = id
+  console.log("My id ", id)
   console.log('joined: ' + room);
   isChannelReady = true;
+  isInitiator = true;
+  maybeStart()
 });
 
 socket.on('log', function(array) {
@@ -100,16 +136,18 @@ socket.on('log', function(array) {
 
 function sendMessage(message) {
   console.log('Client sending message: ', message);
-  socket.emit('message', message);
+  socket.emit('message', message, myId, room, isStudent, latestId);
 }
 
-// This client receives a message
-socket.on('message', function(message) {
-  console.log('Client received message:', message);
+// This client receives a message and the id of who sent it
+socket.on('message', function(message, id) {
+  //console.log('Client received message:', message);
   if (message === 'got user media') {
+    console.log("Launching maybe start")
     maybeStart();
   } else if (message.type === 'offer') {
-    if (!isInitiator && !isStarted) {
+    // If it is not the initiator and it is not started
+    if (!isInitiator) {
       maybeStart();
     }
     pc.setRemoteDescription(new RTCSessionDescription(message));
@@ -123,33 +161,19 @@ socket.on('message', function(message) {
     });
     pc.addIceCandidate(candidate);
   } else if (message === 'bye') {
-    handleRemoteHangup();
+    handleRemoteHangup(id);
     isInitiator = true;
-  } else if (message === 'bye')
-  {
-   // nothing yet  
   }
 });
 
 ////////////////////////////////////////////////////
 
 var localVideo = document.querySelector('#localVideo');
-var remoteVideo = document.querySelector('#remoteVideo');
 
-navigator.mediaDevices.getUserMedia({
-  audio: true,
-  video: true
-})
-  .then(gotStream)
-  .catch(function(e) {
-    alert('getUserMedia() error: ' + e.name);
-  });
 
 function gotStream(stream) {
   setClientMessage("afterAllow")
-  if (isChannelReady){
-  setClientMessage("joinedRoom")
-  }
+  if (isChannelReady){ setClientMessage("joinedRoom") }
   console.log('Adding local stream.');
   localStream = stream;
   localVideo.srcObject = stream;
@@ -165,25 +189,27 @@ var constraints = {
 
 console.log('Getting user media with constraints', constraints);
 
-if (location.hostname !== 'localhost') {
-  requestTurn(
-{
-    url: 'turn:franco@arulearning.com',
-    credential: '123456'
-}
-  );
-}
+//if (location.hostname !== 'localhost') {
+//  requestTurn(
+//{
+//    urls: 'turn:arulearning.com',
+//    credential: '123456'
+//}
+//  );
+//}
 function maybeStart() {
   console.log('>>>>>>> maybeStart() ', isStarted, localStream, isChannelReady);
-  if (!isStarted && typeof localStream !== 'undefined' && isChannelReady) {
+  // if (!isStarted && typeof localStream !== 'undefined' && isChannelReady) {
+  if (typeof localStream !== 'undefined' && isChannelReady) {
     console.log('>>>>>> creating peer connection');
+    console.log("Sending new offers");
     createPeerConnection();
     pc.addStream(localStream);
     isStarted = true;
     console.log('isInitiator', isInitiator);
     setClientMessage("afterConnection")
     if (isInitiator) {
-    console.log('isInitiator', isInitiator);
+      console.log('isInitiator', isInitiator);
       doCall();
     }
   }
@@ -197,7 +223,8 @@ window.onbeforeunload = function() {
 
 function createPeerConnection() {
   try {
-    pc = new RTCPeerConnection(null);
+    console.log("Creating peer connection", peerConnectionConfig);
+    pc = new RTCPeerConnection(peerConnectionConfig);
     pc.onicecandidate = handleIceCandidate;
     pc.onaddstream = handleRemoteStreamAdded;
     pc.onremovestream = handleRemoteStreamRemoved;
@@ -228,8 +255,8 @@ function handleCreateOfferError(event) {
 }
 
 function doCall() {
-  console.log('Sending offer to peer');
-  pc.createOffer(setLocalAndSendMessage, handleCreateOfferError);
+  console.log('Sending offer to peer', sdpConstraints);
+  pc.createOffer(setLocalAndSendMessage, handleCreateOfferError, sdpConstraints);
 }
 
 function doAnswer() {
@@ -250,42 +277,23 @@ function onCreateSessionDescriptionError(error) {
   trace('Failed to create session description: ' + error.toString());
 }
 
-function requestTurn(turnURL) {
-  var turnExists = false;
-  for (var i in pcConfig.iceServers) {
-    if (pcConfig.iceServers[i].urls.substr(0, 5) === 'turn:') {
-      turnExists = true;
-      turnReady = true;
-      break;
-    }
-  }
-  if (!turnExists) {
-    console.log('Getting TURN server from ', turnURL);
-    // No TURN server. Get one from computeengineondemand.appspot.com:
-    pcConfig.iceServers.push(turnURL)
-    turnReady = true;
-    /*var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState === 4 && xhr.status === 200) {
-	var turnServer = JSON.parse(xhr.responseText);
-	console.log('Got TURN server: ', turnServer);
-	pcConfig.iceServers.push({
-	  'urls': 'turn:' + turnServer.username + '@' + turnServer.turn,
-	  'credential': turnServer.password
-	});
-	turnReady = true;
-      }
-    };
-    xhr.open('GET', turnURL, true);
-    xhr.send();
-	*/
-  }
-}
-
 function handleRemoteStreamAdded(event) {
   console.log('Remote stream added.');
   remoteStream = event.stream;
-  remoteVideo.srcObject = remoteStream;
+  // Create a new canvas and put the stream there
+  numberOfPeers += 1
+  $('.remoteVideos').append("<video class='remoteVideo' id='video_"+ latestId +"' autoplay playsinline></video>")
+  updateVideos();
+  $("#video_" + latestId)[0].srcObject = remoteStream;
+
+  $("#video_" + latestId)[0].addEventListener('loadedmetadata', function() {
+    console.log(`loaded metadata Remote video videoWidth: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
+  });
+  $("#video_" + latestId)[0].addEventListener('resize', () => {
+    console.log(`resize: Remote video size changed to ${$("#video_" + latestId)[0].videoWidth}x${$("#video_" + latestId)[0].videoHeight}`);
+    // We'll use the first onsize callback as an indication that video has started
+    // playing out.
+  });
 }
 
 function handleRemoteStreamRemoved(event) {
@@ -298,9 +306,14 @@ function hangup() {
   sendMessage('bye');
 }
 
-function handleRemoteHangup() {
+function handleRemoteHangup(id) {
   console.log('Session terminated.');
-  stop();
+  //remove the video from the videos arrays
+  console.log("Removing id: " , id)
+  $("#video_"+id).remove()
+  numberOfPeers -= 1
+  updateVideos();
+  //stop();
   isInitiator = false;
 }
 

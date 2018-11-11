@@ -2,20 +2,45 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
     <title>Disfruta tu sesion</title>
     <link rel="stylesheet" href="assets/css/main.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <link rel="stylesheet" href="vendor/css/bootstrap.min.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <link rel="stylesheet" href="vendor/js/jquery-ui.min.css">
   </head>
   <body>
-    <div class="lobby">En la sala:</div>
-    <h1 id="roomStatus"> Permitenos usar tus cámara para las sesiones </h1>
+    <div class="controls">
+      <div class="muteAudio" onclick="toggleLocalAudio()"><i class="fas fa-microphone"></i></div>
+      <div class="muteVideo" onclick="toggleLocalVideo()"><i class="fas fa-video"> </i></div>
+      <div class="fullscreen" onclick="toggleFullscreen()"><i class="fas fa-expand"> </i></div>
+    </div>
+    <div class="show-chat" onclick="toggleChat()">
+      <span class="unread-messages"></span>
+      <i class="fas fa-comments"></i> <span class="label">Chat</span></div>
+    <div class="chat-bar">
+	<div class="lobby"><b>En la sala:</b> <ul></ul></div>
+      <div class="chat">
+      </div>
+      <form class="chat-input">
+	<textarea class="form-control" value="" name="chat" id="chat-body" placeholder="Write your messsage here" required> </textarea>
+	<button class="btn btn-primary send"> <i class="fas fa-arrow-right"></i> Send </button>
+      </form>
+    </div>
+    <h1 id="roomStatus"> Permítenos usar tus cámara para las sesiones </h1>
 
     <video id="localVideo" autoplay muted playsinline></video>
-    <video id="remoteVideo" autoplay playsinline></video>
 
+    <div class="remoteVideos">
+
+    </div>
     <script src="vendor/js/jquery.min.js"> </script>
+    <script src="vendor/js/jquery-ui.min.js"></script>
+    <script src="vendor/js/autoresize.js"></script>
     <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
-    <script src="vendor/socket.io/socket.io.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="assets/js/ui.js"></script>
     <script src="assets/js/session.js"></script>
   </body>
 </html>

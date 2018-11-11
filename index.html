@@ -10,59 +10,49 @@
     <div class="container">
       <div class="row my-5 justify-content-center">
 	<div class="col-8 col-md-8">
-	  <h1 class="display-4">Bienvienido a Telepresencia</h1>
+	  <h1 class="display-4">Bienvenido a Telepresencia</h1>
 	  <h2>Escoje o crea una sala</h2>
 	</div>
       </div>
-      <div class="row justify-content-center">
-	<div class="col-6 col-md-6">
-	  <input class="form-control" type="text" name="key" id="key" value=""
-					  placeholder="Nombre de la Sala (ej. Matematicas2)"/>
+      <form action="room.html" method="get" accept-charset="utf-8" class="row justify-content-center">
+	<div class="col-12 col-md-6 my-2">
+	  <input type="hidden" name="transmitter" value="1">
+	  <input class="form-control" type="text" name="room" value=""
+						      placeholder="Nombre de la Sala (ej. Matematicas2)" required/>
 	</div>
-	  <div class="col-md-2 btn btn-primary">Crear</div>
-      </div>
-      <div class="row my-5 justify-content-center">
-	<div class="col-3 col-md-3">
-	  <div class="card room">
-	    <div class="card-header">
-	      Titulo de la Sala 1
-	    </div>
-	    <div class="card-body">
-	      <p class="card-text">
-	      Un poco de descripcion de la Sala 1
-	      </p>
-	      <div class="btn btn-primary">Entrar a la Sala</div>
-	    </div>
-	  </div>
-	</div>
-	<div class="col-3 col-md-3">
-	  <div class="card room">
-	    <div class="card-header">
-	      Titulo de la Sala 2
-	    </div>
-	    <div class="card-body">
-	      <p class="card-text">
-	      Un poco de descripcion de la Sala 2
-	      </p>
-	      <div class="btn btn-primary">Entrar a la Sala</div>
-	    </div>
-	  </div>
-	</div>
-	<div class="col-3 col-md-3">
-	  <div class="card room">
-	    <div class="card-header">
-	      Titulo de la Sala 3
-	    </div>
-	    <div class="card-body">
-	      <p class="card-text">
-	      Un poco de descripcion de la Sala 3
-	      </p>
-	      <div class="btn btn-primary">Entrar a la Sala</div>
-	    </div>
-	  </div>
-	</div>
-      </div>
+	<button class="col-10 col-md-2 my-2 btn btn-primary">Crear</button>
+      </form>
+      <div class="row my-5 justify-content-center rooms"> </div>
     </div>
+    <script src="vendor/js/jquery.min.js"> </script>
     <script src="vendor/js/bootstrap.min.js" charset="utf-8"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var rooms = [];
+	function deleteRoom(name){
+	  rooms = rooms.filter(room => room != name );
+	}
+      function addRoom(name, description){
+	var html = '<div class="col-5 col-md-3 my-3"><div class="card room"><div class="card-header">'
+	html += name
+	html += ' </div> <div class="card-body"> <p class="card-text">'
+	html += description
+	html += ' </p> <a href="room.html?room='
+	  + name
+	  + '" class="btn btn-primary">Entrar a la Sala</a> </div> </div> </div>'
+	$(".rooms").append(html);
+      }
+
+	var socket = io().connect();
+
+	socket.on("rooms", function(rooms){
+	  this.rooms = rooms;
+	Object.keys(rooms).forEach(room => addRoom(room, "Descripción de "+room) );
+      })
+	socket.on("new room", function(room){
+	addRoom(room, "Descripcion de "+room)
+      })
+
+    </script>
   </body>
 </html>
