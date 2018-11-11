@@ -1,5 +1,6 @@
 $(document).mouseover(showControls);
 $(document).mouseleave(hideControls);
+$("textarea").autoResize({ extraSpace : 0});
 function showControls(){
    $(".fullscreen").show("slide",
      {
@@ -38,7 +39,43 @@ function hideControls(){
     });
     });
 }
+$(document).ready(function(){
+var message = {
+  sender_id: myId,
+  time: "13:06pm",
+  body: "shamalahnchaslkf sdfkjsdfl askdf"
+}
+var notMyMessage = {
+  sender_id: "yolo",
+  time: "13:06pm",
+  body: "shamalahnchaslkf sdfkjsdfl askdf"
+}
+addMessage(message);
+addMessage(notMyMessage);
+addMessage(message);
+addMessage(notMyMessage);
+addMessage(notMyMessage);
+addMessage(message);
+addMessage(notMyMessage);
 
+});
+
+function addMessage(message){
+  var name = "Teacher";
+  var html = '<div class="'
+  if (message.sender_id == myId){
+    name = "Me";
+    html += "my"
+  }
+  else{
+    if (isStudent) name = "Student";
+    else name = "Teacher";
+  }
+      html += ' message"><div class="name">'+ name +'</div>'
+      html += '<div class="timestamp">' + message.time + '</div>'
+      html += '<div class="body">' + message.body + '</div> </div>'
+  $(".chat").append(html);
+}
 var showChat = false;
    $(".chat-bar").hide("slide",
      {
@@ -48,8 +85,8 @@ var showChat = false;
 function toggleChat(){
   showChat = !showChat;
   if (showChat){
-    $("#localVideo").css("right", "300px");
-    $(".show-chat").css("right", "300px");
+    $("#localVideo").css("right", "350px");
+    $(".show-chat").css("right", "350px");
     $(".show-chat > i").removeClass("fa-comments");
     $(".show-chat > i").addClass("fa-times");
     $(".show-chat > span").html("Hide");
@@ -87,21 +124,11 @@ function setClientMessage(key){
       direction: "up",
       duration: 300
     });
-   $(".lobby").hide("slide",
-     {
-      direction: "right",
-      duration: 300
-    });
   }
   else{
    $("#roomStatus").show("slide",
      {
       direction: "up",
-      duration: 300
-    });
-   $(".lobby").show("slide",
-     {
-      direction: "right",
       duration: 300
     });
   }
@@ -295,5 +322,4 @@ function downloadSampleFile(){
   // All set, let's hit it!
   xhr.open("GET", "URL/TO/PROBE.FILE", true);
   xhr.send();
-
 }

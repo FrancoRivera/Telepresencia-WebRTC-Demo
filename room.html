@@ -2,6 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
     <title>Disfruta tu sesion</title>
     <link rel="stylesheet" href="assets/css/main.css" type="text/css" media="screen" title="no title" charset="utf-8">
     <link rel="stylesheet" href="vendor/css/bootstrap.min.css" type="text/css" media="screen" title="no title" charset="utf-8">
@@ -16,24 +18,13 @@
     </div>
       <div class="show-chat" onclick="toggleChat()"> <i class="fas fa-comments"></i> <span>Chat</span></div>
     <div class="chat-bar">
-      <div class="chat">
 	<div class="lobby"><b>En la sala:</b> <ul></ul></div>
-	<div class="message"> 
-	  <div class="name">Franco: </div>
-	  <div class="timestamp">13:06pm </div>
-	  <div class="body"> Lorem impsum blahblahblah </div>
-	</div>
-	<div class="my message"> 
-	  <div class="name">Franco: </div>
-	  <div class="timestamp">13:06pm </div>
-	  <div class="body"> Lorem impsum blahblahblah </div>
-	</div>
-	<div class="my message"> 
-	  <div class="name">Franco: </div>
-	  <div class="timestamp">13:06pm </div>
-	  <div class="body"> Lorem impsum blahblahblah </div>
-	</div>
+      <div class="chat">
       </div>
+      <form class="chat-input">
+	<textarea class="form-control" value="" name="chat" id="" placeholder="Write your messsage here"> </textarea>
+	<button class="btn btn-primary send"> <i class="fas fa-arrow-right"></i> Send </button>
+      </form>
     </div>
     <h1 id="roomStatus"> Permítenos usar tus cámara para las sesiones </h1>
 
@@ -44,6 +35,7 @@
     </div>
     <script src="vendor/js/jquery.min.js"> </script>
     <script src="vendor/js/jquery-ui.min.js"></script>
+    <script src="vendor/js/autoresize.js"></script>
     <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="assets/js/ui.js"></script>
